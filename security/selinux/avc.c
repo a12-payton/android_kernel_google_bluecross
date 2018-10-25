@@ -770,6 +770,7 @@ static void avc_audit_post_callback(struct audit_buffer *ab, void *a)
 	}
 }
 
+#ifdef CONFIG_AUDIT
 /* This is the slow part of avc audit with big stack footprint */
 noinline int slow_avc_audit(struct selinux_state *state,
 			    u32 ssid, u32 tsid, u16 tclass,
