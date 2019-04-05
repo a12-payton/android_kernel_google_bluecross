@@ -30,6 +30,8 @@
 
 #define KGSL_MAX_PWRLEVELS 10
 
+#define KGSL_MAX_TZONE_NAMES 2
+
 /* Only two supported levels, min & max */
 #define KGSL_CONSTRAINT_PWR_MAXLEVELS 2
 
@@ -167,7 +169,7 @@ struct kgsl_regulator {
  * @sysfs_pwr_limit - pointer to the sysfs limits node
  * isense_clk_indx - index of isense clock, 0 if no isense
  * isense_clk_on_level - isense clock rate is XO rate below this level.
- * tzone_name - pointer to thermal zone name of GPU temperature sensor
+ * tzone_names - array of thermal zone names of GPU temperature sensors
  */
 
 struct kgsl_pwrctrl {
@@ -222,7 +224,7 @@ struct kgsl_pwrctrl {
 	struct kgsl_pwr_limit *sysfs_pwr_limit;
 	unsigned int gpu_bimc_int_clk_freq;
 	bool gpu_bimc_interface_enabled;
-	const char *tzone_name;
+	const char *tzone_names[KGSL_MAX_TZONE_NAMES];
 };
 
 int kgsl_pwrctrl_init(struct kgsl_device *device);
