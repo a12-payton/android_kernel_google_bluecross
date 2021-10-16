@@ -4049,7 +4049,6 @@ static int fg_psy_get_property(struct power_supply *psy,
 					       POWER_SUPPLY_PROP_HEALTH, pval);
 		break;
 	default:
-		pr_err("unsupported property %d\n", psp);
 		rc = -EINVAL;
 		break;
 	}
