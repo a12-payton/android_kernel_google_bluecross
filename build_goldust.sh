@@ -46,6 +46,8 @@ echo
 
 make clean && make mrproper
 
+rm -rf  out/goldust.zip
+
 echo
 echo "Issue Build Commands"
 echo
@@ -58,7 +60,6 @@ CONFIG=b1c1_defconfig
 PATH="${KERNEL_DIR}/../clang/bin:${KERNEL_DIR}/../aarch64-linux-android-4.9/bin:${KERNEL_DIR}/../arm-linux-androideabi-4.9/bin:${PATH}"
 
 # Export
-export LOCALVERSION=-Goldust-v1.1
 
 export ARCH=arm64
 export SUBARCH=arm64
@@ -68,7 +69,6 @@ export CROSS_COMPILE=$KERNEL_DIR/../aarch64-linux-android-4.9/bin/aarch64-linux-
 export CROSS_COMPILE_ARM32=$KERNEL_DIR/../arm-linux-androideabi-4.9/bin/arm-linux-androideabi-
 export LD_LIBRARY_PATH=$KERNEL_DIR/../clang/lib64:$LD_LIBRARY_PATH
 
-export KBUILD_BUILD_HOST="mint"
 export KBUILD_BUILD_USER="cool585"
 
 # Build start
