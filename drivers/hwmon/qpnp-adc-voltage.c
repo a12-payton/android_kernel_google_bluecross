@@ -1383,7 +1383,7 @@ int32_t qpnp_vbat_sns_comp_result(struct qpnp_vadc_chip *vadc,
 	rc = qpnp_vadc_conv_seq_request(vadc, ADC_SEQ_NONE,
 			DIE_TEMP, &die_temp_result);
 	if (rc < 0) {
-		pr_err("Error reading die_temp\n");
+		pr_debug("Error reading die_temp\n");
 		return rc;
 	}
 
@@ -2114,7 +2114,7 @@ int32_t qpnp_vadc_read(struct qpnp_vadc_chip *vadc,
 		rc = qpnp_vadc_conv_seq_request(vadc, ADC_SEQ_NONE,
 				DIE_TEMP, &die_temp_result);
 		if (rc < 0) {
-			pr_err("Error reading die_temp\n");
+			pr_debug("Error reading die_temp\n");
 			return rc;
 		}
 
@@ -2148,7 +2148,7 @@ int32_t qpnp_vadc_read(struct qpnp_vadc_chip *vadc,
 		rc = qpnp_vadc_conv_seq_request(vadc, ADC_SEQ_NONE,
 				channel, result);
 		if (rc < 0)
-			pr_err("Error reading die_temp\n");
+			pr_debug("Error reading die_temp\n");
 
 		ret.intval = 0;
 		rc = power_supply_set_property(vadc->vadc_chg_vote,
