@@ -48,40 +48,34 @@ jiffies = jiffies_64;
 	HYPERVISOR_EXTABLE				\
 	VMLINUX_SYMBOL(__hyp_text_end) = .;
 
-#define IDMAP_TEXT					\
-	. = ALIGN(SZ_4K);				\
-	VMLINUX_SYMBOL(__idmap_text_start) = .;		\
-	*(.idmap.text)					\
+#define IDMAP_TEXT				\
+	. = ALIGN(SZ_4K);			\
+	VMLINUX_SYMBOL(__idmap_text_start) = .;	\
+	*(.idmap.text)				\
 	VMLINUX_SYMBOL(__idmap_text_end) = .;
 
 #ifdef CONFIG_HIBERNATION
-#define HIBERNATE_TEXT					\
-	. = ALIGN(SZ_4K);				\
+#define HIBERNATE_TEXT				\
+	. = ALIGN(SZ_4K);			\
 	VMLINUX_SYMBOL(__hibernate_exit_text_start) = .;\
-	*(.hibernate_exit.text)				\
+	*(.hibernate_exit.text)			\
 	VMLINUX_SYMBOL(__hibernate_exit_text_end) = .;
 #else
 #define HIBERNATE_TEXT
 #endif
 
 #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-#define TRAMP_TEXT					\
-	. = ALIGN(PAGE_SIZE);				\
-	VMLINUX_SYMBOL(__entry_tramp_text_start) = .;	\
-	KEEP(*(.entry.tramp.text))			\
-	. = ALIGN(PAGE_SIZE);				\
+#define TRAMP_TEXT				\
+	. = ALIGN(PAGE_SIZE);			\
+	VMLINUX_SYMBOL(__entry_tramp_text_start) = .;\
+	KEEP(*(.entry.tramp.text))		\
+	. = ALIGN(PAGE_SIZE);			\
 	VMLINUX_SYMBOL(__entry_tramp_text_end) = .;
 #else
 #define TRAMP_TEXT
 #endif
 
-/*
- * The size of the PE/COFF section that covers the kernel image, which
- * runs from stext to _edata, must be a round multiple of the PE/COFF
- * FileAlignment, which we set to its minimum value of 0x200. 'stext'
- * itself is 4 KB aligned, so padding out _edata to a 0x200 aligned
- * boundary should be sufficient.
- */
+/* The size of the PE/COFF section that covers the kernel image must be a round multiple of the PE/COFF FileAlignment */
 PECOFF_FILE_ALIGNMENT = 0x200;
 
 #ifdef CONFIG_EFI
@@ -92,19 +86,9 @@ PECOFF_FILE_ALIGNMENT = 0x200;
 #endif
 
 #if defined(CONFIG_DEBUG_ALIGN_RODATA)
-/*
- *  4 KB granule:   1 level 2 entry
- * 16 KB granule: 128 level 3 entries, with contiguous bit
- * 64 KB granule:  32 level 3 entries, with contiguous bit
- */
-#define SEGMENT_ALIGN			SZ_2M
+#define SEGMENT_ALIGN		SZ_2M
 #else
-/*
- *  4 KB granule:  16 level 3 entries, with contiguous bit
- * 16 KB granule:   4 level 3 entries, without contiguous bit
- * 64 KB granule:   1 level 3 entry
- */
-#define SEGMENT_ALIGN			SZ_64K
+#define SEGMENT_ALIGN		SZ_64K
 #endif
 
 SECTIONS
