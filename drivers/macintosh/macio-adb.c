@@ -18,43 +18,34 @@
 #include <linux/ioport.h>
 
 struct preg {
-	unsigned char r;
-	char pad[15];
+    unsigned char r;
+    char pad[15];
 };
 
 struct adb_regs {
-	struct preg intr;
-	struct preg data[9];
-	struct preg intr_enb;
-	struct preg dcount;
-	struct preg error;
-	struct preg ctrl;
-	struct preg autopoll;
-	struct preg active_hi;
-	struct preg active_lo;
-	struct preg test;
+    struct preg intr;
+    struct preg data[9];
+    struct preg intr_enb;
+    struct preg dcount;
+    struct preg error;
+    struct preg ctrl;
+    struct preg autopoll;
+    struct preg active_hi;
+    struct preg active_lo;
+    struct preg test;
 };
 
-/* Bits in intr and intr_enb registers */
-#define DFB	1		/* data from bus */
-#define TAG	2		/* transfer access grant */
-
-/* Bits in dcount register */
-#define HMB	0x0f		/* how many bytes */
-#define APD	0x10		/* auto-poll data */
-
-/* Bits in error register */
-#define NRE	1		/* no response error */
-#define DLE	2		/* data lost error */
-
-/* Bits in ctrl register */
-#define TAR	1		/* transfer access request */
-#define DTB	2		/* data to bus */
-#define CRE	4		/* command response expected */
-#define ADB_RST	8		/* ADB reset */
-
-/* Bits in autopoll register */
-#define APE	1		/* autopoll enable */
+#define DFB 1
+#define TAG 2
+#define HMB 0x0f
+#define APD 0x10
+#define NRE 1
+#define DLE 2
+#define TAR 1
+#define DTB 2
+#define CRE 4
+#define ADB_RST 8
+#define APE 1
 
 static volatile struct adb_regs __iomem *adb;
 static struct adb_request *current_req, *last_req;
@@ -69,59 +60,58 @@ static void macio_adb_poll(void);
 static int macio_adb_reset_bus(void);
 
 struct adb_driver macio_adb_driver = {
-	"MACIO",
-	macio_probe,
-	macio_init,
-	macio_send_request,
-	/*macio_write,*/
-	macio_adb_autopoll,
-	macio_adb_poll,
-	macio_adb_reset_bus
+    "MACIO",
+    macio_probe,
+    macio_init,
+    macio_send_request,
+    macio_adb_autopoll,
+    macio_adb_poll,
+    macio_adb_reset_bus
 };
 
 int macio_probe(void)
 {
-	struct device_node *np;
+    struct device_node *np;
 
-	np = of_find_compatible_node(NULL, "adb", "chrp,adb0");
-	if (np) {
-		of_node_put(np);
-		return 0;
-	}
-	return -ENODEV;
+    np = of_find_compatible_node(NULL, "adb", "chrp,adb0");
+    if (np) {
+        of_node_put(np);
+        return 0;
+    }
+    return -ENODEV;
 }
 
 int macio_init(void)
 {
-	struct device_node *adbs;
-	struct resource r;
-	unsigned int irq;
+    struct device_node *adbs;
+    struct resource r;
+    unsigned int irq;
 
-	adbs = of_find_compatible_node(NULL, "adb", "chrp,adb0");
-	if (adbs == 0)
-		return -ENXIO;
+    adbs = of_find_compatible_node(NULL, "adb", "chrp,adb0");
+    if (adbs == 0)
+        return -ENXIO;
 
-	if (of_address_to_resource(adbs, 0, &r)) {
-		of_node_put(adbs);
-		return -ENXIO;
-	}
-	adb = ioremap(r.start, sizeof(struct adb_regs));
-	if (!adb) {
-		of_node_put(adbs);
-		return -ENOMEM;
-	}
+    if (of_address_to_resource(adbs, 0, &r)) {
+        of_node_put(adbs);
+        return -ENXIO;
+    }
+    adb = ioremap(r.start, sizeof(struct adb_regs));
+    if (!adb) {
+        of_node_put(adbs);
+        return -ENOMEM;
+    }
 
-	out_8(&adb->ctrl.r, 0);
-	out_8(&adb->intr.r, 0);
-	out_8(&adb->error.r, 0);
-	out_8(&adb->active_hi.r, 0xff); /* for now, set all devices active */
-	out_8(&adb->active_lo.r, 0xff);
-	out_8(&adb->autopoll.r, APE);
+    out_8(&adb->ctrl.r, 0);
+    out_8(&adb->intr.r, 0);
+    out_8(&adb->error.r, 0);
+    out_8(&adb->active_hi.r, 0xff);
+    out_8(&adb->active_lo.r, 0xff);
+    out_8(&adb->autopoll.r, APE);
 
-	irq = irq_of_parse_and_map(adbs, 0);
-	of_node_put(adbs);
-	if (request_irq(irq, macio_adb_interrupt, 0, "ADB", (void *)0)) {
-		printk(KERN_ERR "ADB: can't get irq %d\n", irq);
+    irq = irq_of_parse_and_map(adbs, 0);
+    of_node_put(adbs);
+    if (request_irq(irq, macio_adb_interrupt, 0, "ADB", (void *)0)) {
+        printk(KERN_ERR "ADB: can't get irq %d\n", irq);
 		return -EAGAIN;
 	}
 	out_8(&adb->intr_enb.r, DFB | TAG);
@@ -156,14 +146,14 @@ static int macio_adb_reset_bus(void)
 	spin_lock_irqsave(&macio_lock, flags);
 	out_8(&adb->ctrl.r, in_8(&adb->ctrl.r) | ADB_RST);
 	while ((in_8(&adb->ctrl.r) & ADB_RST) != 0) {
-		if (--timeout == 0) {
-			out_8(&adb->ctrl.r, in_8(&adb->ctrl.r) & ~ADB_RST);
-			spin_unlock_irqrestore(&macio_lock, flags);
-			return -1;
-		}
-	}
-	spin_unlock_irqrestore(&macio_lock, flags);
-	return 0;
+    	if (--timeout == 0) {
+        out_8(&adb->ctrl.r, in_8(&adb->ctrl.r) & ~ADB_RST);
+        spin_unlock_irqrestore(&macio_lock, flags);
+        return -1;
+    }
+}
+spin_unlock_irqrestore(&macio_lock, flags);
+return 0;
 }
 
 /* Send an ADB command */
