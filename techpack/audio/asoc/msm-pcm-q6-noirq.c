@@ -662,7 +662,7 @@ static int msm_pcm_volume_ctl_get(struct snd_kcontrol *kcontrol,
 	struct snd_pcm_volume *vol = snd_kcontrol_chip(kcontrol);
 	struct msm_plat_data *pdata = NULL;
 	struct snd_pcm_substream *substream =
-		vol->pcm->streams[vol->stream].substream;
+		vol->pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream;
 	struct snd_soc_pcm_runtime *soc_prtd = NULL;
 	struct msm_audio *prtd;
 
@@ -699,7 +699,7 @@ static int msm_pcm_volume_ctl_put(struct snd_kcontrol *kcontrol,
 	struct snd_pcm_volume *vol = snd_kcontrol_chip(kcontrol);
 	struct msm_plat_data *pdata = NULL;
 	struct snd_pcm_substream *substream =
-		vol->pcm->streams[vol->stream].substream;
+		vol->pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream;
 	struct snd_soc_pcm_runtime *soc_prtd = NULL;
 	struct msm_audio *prtd;
 	int volume = ucontrol->value.integer.value[0];
@@ -711,8 +711,8 @@ static int msm_pcm_volume_ctl_put(struct snd_kcontrol *kcontrol,
 	}
 	soc_prtd = substream->private_data;
 	if (!substream->runtime || !soc_prtd) {
-		pr_debug("%s substream runtime or private_data not found\n",
-				__func__);
+		 pr_debug("%s substream runtime or private_data not found\n",
+                                  __func__);
 		return 0;
 	}
 	pdata = (struct msm_plat_data *)
