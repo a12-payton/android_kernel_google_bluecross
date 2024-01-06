@@ -1122,7 +1122,7 @@ int mipi_dsi_dcs_get_display_brightness(struct mipi_dsi_device *dsi,
 		*brightness = payload[0];
 		break;
 	case 2:
-		*brightness = payload[0] << 8 || payload[1];
+                *brightness = (payload[0] << 8) | payload[1];
 		break;
 	}
 
