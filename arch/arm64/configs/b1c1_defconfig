@@ -1,4 +1,4 @@
-CONFIG_LOCALVERSION="-📱cybertron-v4⚡"
+CONFIG_LOCALVERSION="-📱cybertron-v5⚡"
 # CONFIG_LOCALVERSION_AUTO is not set
 CONFIG_KERNEL_LZ4=y
 # CONFIG_FHANDLE is not set
